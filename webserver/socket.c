@@ -7,7 +7,10 @@
 int creer_serveur (int port ){
 
 	int socket_serveur ;
+	int socket_client ;
+	const char * message_bienvenue = " Bonjour , bienvenue sur mon serveur bitch \n " ;
 	struct sockaddr_in saddr ;
+	
 
 	socket_serveur = socket( AF_INET , SOCK_STREAM , 0);
 	if ( socket_serveur == -1){
@@ -29,5 +32,13 @@ int creer_serveur (int port ){
 	if ( listen ( socket_serveur , 10) == -1){
 		perror ( " listen socket_serveur " );
 	}
+	
+	socket_client = accept ( socket_serveur , NULL , NULL );
+	if ( socket_client == -1){
+		perror ( "accept" );
+	}
+	/* On peut maintenant dialoguer avec le client */
+	
+	write ( socket_client , message_bienvenue , strlen ( message_bienvenue ));
 	return 0;
 }

@@ -1,4 +1,7 @@
-
+#include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
 
 
 int creer_serveur (int port ){
@@ -12,9 +15,9 @@ int creer_serveur (int port ){
 	}
 	/* Utilisation de la socket serveur */
 	
-		
+	
 	saddr.sin_family = AF_INET ; /* Socket ipv4 */
-	saddr.sin_port = htons (8000); /* Port d ’ écoute */
+	saddr.sin_port = htons (port); /* Port d ’ écoute */
 	saddr.sin_addr.s_addr = INADDR_ANY ; 
 	/* écoute sur toutes les interfaces */
 	
@@ -26,4 +29,5 @@ int creer_serveur (int port ){
 	if ( listen ( socket_serveur , 10) == -1){
 		perror ( " listen socket_serveur " );
 	}
+	return 0;
 }

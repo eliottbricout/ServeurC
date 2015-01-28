@@ -6,6 +6,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdlib.h>
 
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
@@ -15,6 +19,9 @@ int main ( int argc , char **argv ){
 /* Arnold Robbins in the LJ of February '95 , describing RCS */
 	int socket_serveur;
 	int socket_client;
+	
+	initSignaux();
+	
 	if(argc>1 && strcmp(argv[1], "-advice" ) == 0) {
 		printf (" Don 't Panic !\n " );
 		return 42;
@@ -53,4 +60,23 @@ void gestion_client(int socket_client){
 	}
 
 	printf ( " un client a quitter le serveur car il etait nul\n " );
+	exit(0);
+}
+
+void initSignaux(){
+	if(signal(SIGPIPE,SIG_IGN)==SIG_ERR)
+		perror("signal");
+
+	struct sigaction sa;
+	sa.sa_handler = traitement_signal;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
+	
+	if(sigaction(SIGCHLD,&sa,NULL)==-1)
+		perror("sigaction(SIGCHLD)");
+		
+}
+
+void traitement_signal(int sig){
+	wait(NULL);
 }

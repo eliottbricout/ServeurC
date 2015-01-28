@@ -2,7 +2,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-
+#include <unistd.h>
+#include "socket.h"
+#include <string.h>
 
 int creer_serveur (int port ){
 
@@ -40,5 +42,5 @@ int creer_serveur (int port ){
 	/* On peut maintenant dialoguer avec le client */
 	
 	write ( socket_client , message_bienvenue , strlen ( message_bienvenue ));
-	return 0;
+	return socket_client;
 }

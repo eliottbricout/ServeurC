@@ -9,8 +9,6 @@
 int creer_serveur (int port ){
 
 	int socket_serveur ;
-	int socket_client ;
-	const char * message_bienvenue = " Bonjour , bienvenue sur mon serveur bitch \n " ;
 	struct sockaddr_in saddr ;
 	
 
@@ -19,6 +17,10 @@ int creer_serveur (int port ){
 		perror ( "socket_serveur" );
 	}
 	/* Utilisation de la socket serveur */
+	
+	int optval = 1;
+	if ( setsockopt ( socket_serveur , SOL_SOCKET , SO_REUSEADDR , & optval , sizeof(int)) == -1)
+		perror ( " Can not set SO_REUSEADDR option " );
 	
 	
 	saddr.sin_family = AF_INET ; /* Socket ipv4 */
@@ -34,13 +36,6 @@ int creer_serveur (int port ){
 	if ( listen ( socket_serveur , 10) == -1){
 		perror ( " listen socket_serveur " );
 	}
-	
-	socket_client = accept ( socket_serveur , NULL , NULL );
-	if ( socket_client == -1){
-		perror ( "accept" );
-	}
-	/* On peut maintenant dialoguer avec le client */
-	
-	write ( socket_client , message_bienvenue , strlen ( message_bienvenue ));
-	return socket_client;
+
+	return socket_serveur;
 }

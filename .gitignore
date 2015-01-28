@@ -1,3 +1,5 @@
 *.o
+*~
+TEMPORAIRE
 Bowser
 *.dep

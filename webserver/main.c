@@ -79,12 +79,8 @@ void initSignaux(){
 
 }
 
-<<<<<<< HEAD
-void traitement_signal(int sig)
-{
-	printf("%d",sig);
-=======
+
 void traitement_signal(int sig){
->>>>>>> e9b2a7c15f4057bca3aa0462a4d15fb35eaec717
+	printf("%d",sig);
 	wait(NULL);
 }

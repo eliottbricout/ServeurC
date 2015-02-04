@@ -13,13 +13,13 @@ int creer_serveur (int port){
 
     socket_serveur = socket( AF_INET , SOCK_STREAM , 0);
     if(socket_serveur == -1){
-        perror("socket_serveur");
+        perror("Probleme socket_serveur");
     }
     /* Utilisation de la socket serveur */
 
     int optval = 1;
     if(setsockopt(socket_serveur , SOL_SOCKET , SO_REUSEADDR , & optval , sizeof(int)) == -1){
-        perror(" Can not set SO_REUSEADDR option ");
+        perror("Probleme Can not set SO_REUSEADDR option ");
     }
 
 
@@ -29,12 +29,12 @@ int creer_serveur (int port){
     /* écoute sur toutes les interfaces */
 
     if (bind(socket_serveur, (struct sockaddr *) &saddr, sizeof(saddr)) == -1){
-        perror(" bind socker_serveur ");
+        perror("Probleme Bind socker_serveur ");
     }
 
 
     if(listen(socket_serveur , 10) == -1){
-        perror(" listen socket_serveur ");
+        perror("Probleme Listen socket_serveur ");
     }
 
     return socket_serveur;

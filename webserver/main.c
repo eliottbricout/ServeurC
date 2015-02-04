@@ -21,7 +21,7 @@ int main(int argc , char **argv){
 
 	initSignaux();
 	if(argc > 1 && strcmp(argv[1], "-advice") == 0){
-		printf(" Don 't Panic !\n ");
+		printf("Don 't Panic !\n ");
 		return 42;
 	}
 
@@ -30,13 +30,13 @@ int main(int argc , char **argv){
 	while(1){
 		socket_client = accept(socket_serveur , NULL , NULL);
 		if(socket_client == -1){
-			perror("bug de connection");
+			perror("Bug de connection");
 		}else{
 			nbclient++;
 			if(fork() == 0){
-				printf(" un client viens de ce connecter\n ");
+				printf("Un client vient de se connecter\n ");
 
-				printf(" vous avez %d client connecter \n ", nbclient);
+				printf("Vous avez %d client connecté\n ", nbclient);
 
 				gestion_client(socket_client);
 			}
@@ -49,23 +49,23 @@ int main(int argc , char **argv){
 
 void gestion_client(int socket_client){
 	/* On peut maintenant dialoguer avec le client */
-	const char *message_bienvenue = " Bonjour, bienvenue sur mon serveur bitch \n " ;
+	const char *message_bienvenue = "Bonjour, bienvenue sur mon serveur.\n " ;
 	FILE *fp =fdopen(socket_client , "w+");
 	fprintf(fp,"<Bowser> %s",message_bienvenue);
 	while(fgets(buff , SIZE_BUFF, fp)!=NULL){
 	
-		if(fprintf(fp,"<Bowser>%s",buff) == -1){
-			perror("probleme de write");
+		if(fprintf(fp,"<Bowser> %s",buff) == -1){
+			perror("Probleme d'écriture.");
 		}
 	}
 
-	printf(" un client a quitter le serveur car il etait nul\n ");
+	printf("Un client a quitté le serveur.\n");
 	exit(0);
 }
 
 void initSignaux(){
 	if(signal(SIGPIPE, SIG_IGN) == SIG_ERR){
-		perror("signal");
+		perror("Problème de signal");
 	}
 
 	struct sigaction sa;
@@ -74,7 +74,7 @@ void initSignaux(){
 	sa.sa_flags = SA_RESTART;
 
 	if(sigaction(SIGCHLD, &sa, NULL) == -1){
-		perror("sigaction(SIGCHLD)");
+		perror("Problème de sigaction(SIGCHLD)");
 	}
 
 }

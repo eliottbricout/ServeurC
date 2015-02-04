@@ -88,5 +88,6 @@ void initSignaux()
 
 void traitement_signal(int sig)
 {
+	printf("%d",sig);
 	wait(NULL);
 }

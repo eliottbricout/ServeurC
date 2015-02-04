@@ -49,12 +49,12 @@ int main(int argc , char **argv){
 
 void gestion_client(int socket_client){
 	/* On peut maintenant dialoguer avec le client */
-	const char *message_bienvenue = " Bonjour , bienvenue sur mon serveur bitch \n " ;
-	int ret;
-	write(socket_client , message_bienvenue , strlen(message_bienvenue));
-
-	while((ret = read(socket_client , buff, SIZE_BUFF)) > 0){
-		if(write(socket_client , buff , ret) == -1){
+	const char *message_bienvenue = " Bonjour, bienvenue sur mon serveur bitch \n " ;
+	FILE *fp =fdopen(socket_client , "w+");
+	fprintf(fp,"<Bowser> %s",message_bienvenue);
+	while(fgets(buff , SIZE_BUFF, fp)!=NULL){
+	
+		if(fprintf(fp,"<Bowser>%s",buff) == -1){
 			perror("probleme de write");
 		}
 	}
@@ -79,12 +79,7 @@ void initSignaux(){
 
 }
 
-<<<<<<< HEAD
-void traitement_signal(int sig)
-{
-	printf("%d",sig);
-=======
 void traitement_signal(int sig){
->>>>>>> e9b2a7c15f4057bca3aa0462a4d15fb35eaec717
+	printf("%d",sig);
 	wait(NULL);
 }

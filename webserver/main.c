@@ -34,9 +34,9 @@ int main(int argc , char **argv){
 		}else{
 			nbclient++;
 			if(fork() == 0){
-				printf("Un client vient de se connecter\n ");
+				printf("<Serveur> Un client vient de se connecter\n");
 
-				printf("Vous avez %d client connecté\n ", nbclient);
+				printf("<Serveur> Vous avez %d client connecté\n", nbclient);
 
 				gestion_client(socket_client);
 			}
@@ -49,7 +49,7 @@ int main(int argc , char **argv){
 
 void gestion_client(int socket_client){
 	/* On peut maintenant dialoguer avec le client */
-	const char *message_bienvenue = "Bonjour, bienvenue sur mon serveur.\n " ;
+	const char *message_bienvenue = "Bonjour, bienvenue sur mon serveur.\n" ;
 	FILE *fp =fdopen(socket_client , "w+");
 	fprintf(fp,"<Bowser> %s",message_bienvenue);
 	while(fgets(buff , SIZE_BUFF, fp)!=NULL){
@@ -59,7 +59,7 @@ void gestion_client(int socket_client){
 		}
 	}
 
-	printf("Un client a quitté le serveur.\n");
+	printf("<Serveur> Un client a quitté le serveur.\n");
 	exit(0);
 }
 

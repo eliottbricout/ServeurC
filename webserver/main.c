@@ -54,7 +54,10 @@ void gestion_client(int socket_client){
 	FILE *fp =fdopen(socket_client , "w+");
 	/*	printf("<Bowser> %s",message_bienvenue);*/
 	while(fgets(buff , SIZE_BUFF, fp)!=NULL){
-		printf("<Bowser>%s",buff);
+
+		decoupageGET(buff);
+
+		/* printf("<Serveur>%s",buff); */
 	}
 
 	printf("<Serveur> Un client a quitté le serveur.\n");
@@ -81,3 +84,22 @@ void traitement_signal(int sig){
 	printf("%d",sig);
 	wait(NULL);
 }
+
+void decoupageGET(char * str){
+	char s[2] = " ";
+	char *token;
+	int nbMot = 0;
+
+	/* get the first token */
+	token = strtok(str, s);
+	printf("TOKEN : %s\n", token);
+
+	if(strcmp(token,"GET") == 0){
+		while( token != NULL ){
+			token = strtok(NULL, s);
+			printf("TOKEN : %s\n", token);
+		}	
+	}
+
+}
+

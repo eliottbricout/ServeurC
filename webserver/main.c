@@ -50,17 +50,33 @@ int main(int argc , char **argv){
 void gestion_client(int socket_client){
 	
 	/* On peut maintenant dialoguer avec le client */
-	/*const char *message_bienvenue = " Bonjour, bienvenue sur mon serveur bitch \n " ;*/
+	int erreur=1;
+	
+	http_request request;
+	const char *message_erreur400 = "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 18\r\n\r\n400 Bad request !\n";
+	const char *message_erreur404 = "HTTP/1.1 404 Bad Request\r\nConnection: close\r\nContent-Length: 18\r\n\r\n404 Bad request !\n";
+	const char *message_bienvenu = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: 17\r\n\r\n Good request ! \n";
 	FILE *fp =fdopen(socket_client , "w+");
-	/*	printf("<Bowser> %s",message_bienvenue);*/
-	while(fgets(buff , SIZE_BUFF, fp)!=NULL){
+	fgets_or_exit(buff,SIZE_BUFF,fp);
+	erreur = parse_http_request(buff,&request);
 
-		decoupageGET(buff);
-
-		/* printf("<Serveur>%s",buff); */
+	while(fgets_or_exit(buff , SIZE_BUFF, fp)!=NULL && ligneVide(buff)==0){
 	}
-
+	printf("%d\n",erreur);
+	
+	if(erreur==0){
+		fprintf(fp ,message_erreur400);
+	}else{
+		if(strcmp(request.url,"/")==0){
+			fprintf(fp ,message_bienvenu);
+		}else{
+			printf("%s" ,message_erreur404);
+			fprintf(fp ,message_erreur404);
+		}
+	}
+	
 	printf("<Serveur> Un client a quitté le serveur.\n");
+	fclose(fp);
 	exit(0);
 }
 
@@ -85,21 +101,34 @@ void traitement_signal(int sig){
 	wait(NULL);
 }
 
-void decoupageGET(char * str){
-	char s[2] = " ";
-	char *token;
-	int nbMot = 0;
-
-	/* get the first token */
-	token = strtok(str, s);
-	printf("TOKEN : %s\n", token);
-
-	if(strcmp(token,"GET") == 0){
-		while( token != NULL ){
-			token = strtok(NULL, s);
-			printf("TOKEN : %s\n", token);
-		}	
+int parse_http_request ( const char * request_line , http_request * request ){
+	if((request->url=malloc(1024))==NULL){
+		perror("pb malloc");
+		return 0;
 	}
+	//&& version[0]>=0 && version[0]<=9 && version[1]>=0 && version[1]<=9
+	if(sscanf(request_line,"GET %s HTTP/%d.%d",request->url,&request->major_version,&request->minor_version)==3 ){
+		
+		return 1;
+	}
+		
+	return 0;
+}
 
+int ligneVide(char * str){
+	if(str[0]=='\n' || str[0]=='\r' ){
+		return 1;
+	}
+	return 0;
+
+}
+
+char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
+	if(fgets(buffer,size,stream)==NULL){
+		printf("<Serveur> Un client a quitté le serveur.\n");
+		exit(0);
+	}
+	printf("%s",buffer);
+	return buffer;
 }
 

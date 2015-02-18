@@ -1,10 +1,18 @@
 #include <stdio.h>
+#include <string.h>
+#include "socket.h"
+#include "main.h"
+#include "gestion_requete.h"
+#include "client.h"
+#include "signaux.h"
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-#include <unistd.h>
-#include "socket.h"
-#include <string.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdlib.h>
 
 int creer_serveur (int port){
 

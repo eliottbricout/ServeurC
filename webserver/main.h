@@ -13,10 +13,4 @@ typedef struct{
 
 
 
-void gestion_client(int socket_client);
-void initSignaux();
-void traitement_signal (int sig );
-int ligneVide(char * str);
-char * fgets_or_exit ( char * buffer , int size , FILE * stream );
-int parse_http_request ( const char * request_line , http_request * request );
 

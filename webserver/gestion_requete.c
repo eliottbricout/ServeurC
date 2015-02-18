@@ -15,14 +15,22 @@
 #include <stdlib.h>
 
 int parse_http_request ( const char * request_line , http_request * request ){
+
+	char method[64];
+
 	if((request->url=malloc(1024))==NULL){
 		perror("pb malloc");
 		return 0;
 	}
 	//&& version[0]>=0 && version[0]<=9 && version[1]>=0 && version[1]<=9
-	if(sscanf(request_line,"GET %s HTTP/%d.%d",request->url,&request->major_version,&request->minor_version)==3 ){
+	if(sscanf(request_line,"%s %s HTTP/%d.%d",method, request->url, &request->major_version, &request->minor_version)==4 ){
+		if(strcmp(method, "GET")==0){
+			request->method=HTTP_GET;
+			return 1;
+		}else{
+			request->method=HTTP_UNSUPPORTED;
+		}
 		
-		return 1;
 	}
 		
 	return 0;

@@ -14,6 +14,9 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
+#define SIZE_BUFF 2048
+char buff[SIZE_BUFF];
+
 int parse_http_request ( const char * request_line , http_request * request ){
 
 	char method[64];
@@ -36,12 +39,26 @@ int parse_http_request ( const char * request_line , http_request * request ){
 	return 0;
 }
 
+void skip_headers ( FILE * client ){
+	while(fgets_or_exit(buff , SIZE_BUFF, client)!=NULL && ligneVide(buff)==0){
+	}
+}
+
 int ligneVide(char * str){
 	if(str[0]=='\n' || str[0]=='\r' ){
 		return 1;
 	}
 	return 0;
 
+}
+
+void send_status ( FILE * client , int code , const char * reason_phrase ){
+	fprintf(client, "HTTP/1.1 %d %s\r\n", code,reason_phrase);
+}
+
+void send_response ( FILE * client , int code , const char * reason_phrase ,const char * message_body ){
+	send_status(client ,code ,reason_phrase);
+	fprintf(client, "Connection: close\r\nContent-Length: %d\r\n\r\n%s",(int)strlen(message_body),message_body);
 }
 
 char *fgets_or_exit ( char *buffer , int size , FILE *stream ){

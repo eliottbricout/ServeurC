@@ -37,7 +37,7 @@ int creer_serveur (int port){
     /* écoute sur toutes les interfaces */
 
     if (bind(socket_serveur, (struct sockaddr *) &saddr, sizeof(saddr)) == -1){
-        perror("Probleme Bind socker_serveur ");
+        perror("Probleme Bind socket_serveur ");
     }
 
 

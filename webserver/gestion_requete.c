@@ -18,6 +18,7 @@
 #include <fcntl.h>
 
 
+
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
 
@@ -77,8 +78,10 @@ int check_and_open ( const char * url , const char * document_root ){
 
 int get_file_size(int fd){
 	struct stat buff;
-	fstat(fd,&buff);
-	printf("%d",(int)buff.st_size);
+	if  (fstat(fd,&buff) != 0) {  
+      printf("error!\n" );  
+      return 0;  
+   }  
 	return (int)buff.st_size;
 }
 
@@ -100,3 +103,12 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	return buffer;
 }
 
+void send_file (int client, int file ){
+	send_status(client ,"200" ,"OK");
+	fprintf(client, "Connection: close\r\nContent-Length: %d\r\n\r\n",get_file_size(file));
+	copy(client,file);
+}
+
+void copy(int in,int out){
+	
+}

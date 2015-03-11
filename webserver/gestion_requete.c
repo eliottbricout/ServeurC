@@ -109,6 +109,29 @@ void send_file (int client, int file ){
 	copy(client,file);
 }
 
-void copy(int in,int out){
-	
+
+int copy(int in, int out) {
+	int fini = 0;
+	char ch;
+	clrscr();
+
+	do{
+		if((ch = fgetc(in))==NULL){	
+			return 1;
+		}
+
+
+		if(ch != EOF){
+			fputc(ch, out);
+		}else{
+			fini = 1;
+		}
+
+	}while(fini == 0);
+
+	printf("Fichier copié !");
+	fclose(in);
+
+	return 0;
+
 }

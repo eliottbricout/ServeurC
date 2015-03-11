@@ -18,6 +18,7 @@
 #include <fcntl.h>
 
 
+
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
 
@@ -99,3 +100,18 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	printf("%s",buffer);
 	return buffer;
 }
+
+
+
+
+ 
+long file_size(const char *filename) {  
+   struct _stat s;  
+ 
+   if  (_stat(filename,&s) != 0) {  
+      printf("error!\n" );  
+      return 0;  
+   }  
+ 
+   return s.st_size;  
+}  

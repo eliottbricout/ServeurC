@@ -13,6 +13,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
@@ -29,14 +33,23 @@ int parse_http_request ( const char * request_line , http_request * request ){
 	if(sscanf(request_line,"%s %s HTTP/%d.%d",method, request->url, &request->major_version, &request->minor_version)==4 ){
 		if(strcmp(method, "GET")==0){
 			request->method=HTTP_GET;
-			return 1;
 		}else{
 			request->method=HTTP_UNSUPPORTED;
+			return 0;
 		}
 		
 	}
-		
-	return 0;
+	rewrite_url ( request->url );
+	return 1;
+}
+
+char * rewrite_url ( char * url ){
+	char * s;
+	s=strchr(url,'?');
+	if(s!=NULL){
+		*s='\0';
+	}
+	return url;
 }
 
 void skip_headers ( FILE * client ){
@@ -49,7 +62,24 @@ int ligneVide(char * str){
 		return 1;
 	}
 	return 0;
+}
 
+int check_and_open ( const char * url , const char * document_root ){
+	int fd;
+	char buff[1024];
+	strcpy(buff,document_root);
+	if((fd = open(strcat(buff,url), O_RDONLY))==-1){
+		return -1;
+	}
+	get_file_size(fd);
+	return fd;
+}
+
+int get_file_size(int fd){
+	struct stat buff;
+	fstat(fd,&buff);
+	printf("%d",(int)buff.st_size);
+	return (int)buff.st_size;
 }
 
 void send_status ( FILE * client , int code , const char * reason_phrase ){

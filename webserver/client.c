@@ -22,7 +22,7 @@ void gestion_client(int socket_client){
 	
 	/* On peut maintenant dialoguer avec le client */
 	int bad_request=1;
-	
+	int fd;
 	http_request request;
 	const char *motd = "super ça marche ma geule \r\n";
 	FILE *fp =fdopen(socket_client , "w+");
@@ -35,7 +35,7 @@ void gestion_client(int socket_client){
 		send_response(fp , 400 , "Bad Request" , " Bad request \r\n" );
 	else if ( request . method == HTTP_UNSUPPORTED )
 		send_response ( fp , 405 , " Method Not Allowed" , " Method Not Allowed \r\n" );
-	else if ( strcmp ( request.url , "/" ) == 0)
+	else if ( ( fd = check_and_open (request.url , ".") ) != -1)
 		send_response (fp, 200 , "OK" , motd );
 	else
 		send_response (fp, 404 , "Not Found" , " Not Found \r\n" );

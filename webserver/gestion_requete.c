@@ -41,6 +41,7 @@ int parse_http_request ( const char * request_line , http_request * request ){
 		
 	}
 	rewrite_url ( request->url );
+	printf("dsfsd %s\n",request->url);
 	return 1;
 }
 
@@ -49,6 +50,9 @@ char * rewrite_url ( char * url ){
 	s=strchr(url,'?');
 	if(s!=NULL){
 		*s='\0';
+	}
+	if(strcmp(url,"/")==0){
+		strcat(url,"index.html");
 	}
 	return url;
 }
@@ -91,7 +95,7 @@ void send_status ( FILE* client , int code , const char * reason_phrase ){
 
 void send_response ( FILE * client , int code , const char * reason_phrase ,const char * message_body ){
 	send_status(client ,code ,reason_phrase);
-	fprintf(client, "Connection: close\r\nContent-Length: %d\r\n\r\n%s",(int)strlen(message_body),message_body);
+	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n%s",(int)strlen(message_body),message_body);
 }
 
 char *fgets_or_exit ( char *buffer , int size , FILE *stream ){

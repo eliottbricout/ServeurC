@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>p5.js basics</title>
+        <script src='p5.min.js'></script>
+        <script>
+        var img;
+		function preload() {
+		  img = loadImage('noireaude.jpg');
+		}
+		function setup() {
+		  createCanvas(640, 480);
+		  drawingContext.shadowOffsetX = 5;
+		  drawingContext.shadowOffsetY = -5;
+		  drawingContext.shadowBlur = 10;
+		  drawingContext.shadowColor = "black";
+		  background(200);
+		  //ellipse(width/2, height/2, 50, 50);
+		  loadImage('noireaude.png', drawNoireaude);
+		}
+
+		function drawNoireaude(img) {
+		  image(img, 0, 0);
+		}
+		
+		/*function draw() {
+		  if (mouseIsPressed) {
+			fill(0);
+		  } else {
+			fill(255);
+		  }
+		  //ellipse(mouseX, mouseY, 80, 80);
+		  image(img, mouseX, mouseY);
+		}*/
+
+        </script>
+    </head>
+    <body>
+        <h1>Premiers pas avec p5.js</h1>
+    </body>
+</html>

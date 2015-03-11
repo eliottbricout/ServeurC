@@ -108,7 +108,11 @@ int copy(int in, int out) {
 	clrscr();
 
 	do{
-		ch = fgetc(in);
+		if((ch = fgetc(in))==NULL){	
+			return 1;
+		}
+
+
 		if(ch != EOF){
 			fputc(ch, out);
 		}else{
@@ -119,5 +123,7 @@ int copy(int in, int out) {
 
 	printf("Fichier copié !");
 	fclose(in);
+
+	return 0;
 
 }

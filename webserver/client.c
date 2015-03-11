@@ -35,7 +35,7 @@ void gestion_client(int socket_client){
 	else if ( request . method == HTTP_UNSUPPORTED )
 		send_response ( fp , 405 , " Method Not Allowed" , " Method Not Allowed \r\n" );
 	else if ( ( fd = check_and_open (request.url , ".") ) != -1)
-		send_file (fp, fd );
+		send_file (fd, fp );
 	else
 		send_response (fp, 404 , "Not Found" , " Not Found \r\n" );
 	

@@ -103,34 +103,17 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	return buffer;
 }
 
-void send_file (int client, int file ){
+void send_file (FILE* client, int file ){
 	send_status(client ,"200" ,"OK");
 	fprintf(client, "Connection: close\r\nContent-Length: %d\r\n\r\n",get_file_size(file));
-	copy(client,file);
+	copy(file,client);
 }
 
 
-int copy(int in, int out) {
-	int fini = 0;
-	char ch;
-	clrscr();
-
-	do{
-		if((ch = fgetc(in))==NULL){	
-			return 1;
-		}
-
-
-		if(ch != EOF){
-			fputc(ch, out);
-		}else{
-			fini = 1;
-		}
-
-	}while(fini == 0);
-
-	printf("Fichier copié !");
-	fclose(in);
+int copy(int in, File* out) {
+	while(){
+	
+	}
 
 	return 0;
 

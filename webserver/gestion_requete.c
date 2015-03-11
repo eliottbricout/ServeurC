@@ -102,16 +102,22 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 }
 
 
+int copy(int in, int out) {
+	int fini = 0;
+	char ch;
+	clrscr();
 
+	do{
+		ch = fgetc(in);
+		if(ch != EOF){
+			fputc(ch, out);
+		}else{
+			fini = 1;
+		}
 
- 
-long file_size(const char *filename) {  
-   struct _stat s;  
- 
-   if  (_stat(filename,&s) != 0) {  
-      printf("error!\n" );  
-      return 0;  
-   }  
- 
-   return s.st_size;  
-}  
+	}while(fini == 0);
+
+	printf("Fichier copié !");
+	fclose(in);
+
+}

@@ -85,7 +85,7 @@ int get_file_size(int fd){
 	return (int)buff.st_size;
 }
 
-void send_status ( FILE * client , int code , const char * reason_phrase ){
+void send_status ( FILE* client , int code , const char * reason_phrase ){
 	fprintf(client, "HTTP/1.1 %d %s\r\n", code,reason_phrase);
 }
 
@@ -103,35 +103,19 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	return buffer;
 }
 
-void send_file (int client, int file ){
-	send_status(client ,"200" ,"OK");
+void send_file (FILE* client, int file ){
+	send_status(client ,200 ,"OK");
 	fprintf(client, "Connection: close\r\nContent-Length: %d\r\n\r\n",get_file_size(file));
-	copy(client,file);
+	copy(file,client);
 }
 
 
-int copy(int in, int out) {
-	int fini = 0;
-	char ch;
-	clrscr();
+int copy(int in, FILE* out) {
 
-	do{
-		if((ch = fgetc(in))==NULL){	
-			return 1;
-		}
-
-
-		if(ch != EOF){
-			fputc(ch, out);
-		}else{
-			fini = 1;
-		}
-
-	}while(fini == 0);
-
-	printf("Fichier copié !");
-	fclose(in);
-
+	char buff[10] ;
+	while(read(in, buff, 10)>0){
+		fprintf(out, "%s", buff);
+	}
 	return 0;
 
 }

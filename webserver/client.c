@@ -29,12 +29,13 @@ void gestion_client(int socket_client){
 	bad_request = parse_http_request(buff,&request);
 	skip_headers ( fp );
 	printf("%d\n",bad_request);
-	
+	//send_response ( fp , 403 , " Method Not Allowed" , " Method Not Allowed \r\n" );
 	if (bad_request==0)
 		send_response(fp , 400 , "Bad Request" , " Bad request \r\n" );
 	else if ( request . method == HTTP_UNSUPPORTED )
-		send_response ( fp , 405 , " Method Not Allowed" , " Method Not Allowed \r\n" );
-
+		send_response ( fp , 405 , "Method Not Allowed" , "Method Not Allowed \r\n" );
+	else if ( strstr(request.url , "..")  != NULL)
+	    send_response ( fp , 403 , "Forbidden" , "Forbidden \r\n" );
 	else if ( ( fd = check_and_open (request.url , "../html") ) != -1)
 		send_file (fp, fd );
 	else

@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include "stats.h"
 
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
@@ -22,7 +23,9 @@ int main(int argc , char **argv){
 	int socket_serveur;
 	int socket_client;
 
+	init_stats();
 	initSignaux();
+	
 	if(argc > 1 && strcmp(argv[1], "-advice") == 0){
 		printf("Don 't Panic !\n ");
 		return 42;
@@ -37,10 +40,10 @@ int main(int argc , char **argv){
 		}else{
 			nbclient++;
 			if(fork() == 0){
+				get_stats()->served_connections++;
 				printf("<Serveur> Un client vient de se connecter\n");
 
 				printf("<Serveur> Vous avez %d client connecté\n", nbclient);
-
 				gestion_client(socket_client);
 			}
 		}

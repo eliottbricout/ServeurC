@@ -8,3 +8,4 @@ char * rewrite_url ( char * url );
 int check_and_open ( const char * url , const char * document_root );
 int get_file_size(int fd);
 int copy(int in,FILE* out);
+void send_stats ( FILE * client );

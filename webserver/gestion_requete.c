@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
-
+#include "stats.h"
 
 
 #define SIZE_BUFF 2048
@@ -105,11 +105,18 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	}
 	printf("%s",buffer);
 	return buffer;
+
+}
+void send_stats ( FILE * client ){
+	web_stats* stats=get_stats();
+	char ligne[1024];
+	snprintf(ligne, 1024, "served_connections=%d \nserved_requests=%d\nok_200=%d\nko_400=%d\nko_403=%d\nko_404=%d",stats->served_connections,stats->served_requests,stats->ok_200,stats->ko_400,stats->ko_403,stats->ko_403);
+	send_response (  client , 200 , "OK" , ligne);
 }
 
 void send_file (FILE* client, int file ){
 	send_status(client ,200 ,"OK");
-	fprintf(client, "Connection: close\r\nContent-Length: %d\r\n\r\n",get_file_size(file));
+	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n",get_file_size(file));
 	copy(file,client);
 }
 

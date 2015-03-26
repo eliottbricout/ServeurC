@@ -31,7 +31,8 @@ void gestion_client(int socket_client){
 	fgets_or_exit(buff,SIZE_BUFF,fp);
 	bad_request = parse_http_request(buff,&request);
 	skip_headers ( fp );
-	printf("%d\n",bad_request);
+	printf("%d reggr\n",bad_request);
+	printf("url : %s",getMineType(request.url ));
 	//send_response ( fp , 403 , " Method Not Allowed" , " Method Not Allowed \r\n" );
 	if (bad_request==0){
 		get_stats()->ko_400++;
@@ -46,14 +47,14 @@ void gestion_client(int socket_client){
 	    send_stats(fp);
 	}else if ( ( fd = check_and_open (request.url , "../html") ) != -1){
 		get_stats()->ok_200++;
-		printf("sfgsdgsgdfggf");
+		printf("%s",getMineType(request.url ));
 		send_file (fp, fd ,getMineType(request.url ) );
 	}else{
 		get_stats()->ko_404++;
 		send_response (fp, 404 , "Not Found" , " Not Found \r\n" );
 	}
 	printf("sfgsdgsgdfggf");
-	printf("<Serveur> Un client a quitté le serveur.\n");
+	printf("<Serveur>Un client a quitté le serveur WEST.\n");
 	fclose(fp);
 	exit(0);
 }

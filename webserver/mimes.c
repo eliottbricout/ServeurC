@@ -22,9 +22,9 @@ char *getExtension(char *url){
 
     char * tmp;
     while((tmp=strchr(url, '.'))!=NULL){
-        tmp=url;
+    	tmp++;
+        url=tmp;
     }
-    printf("url : %s\n",url);
     
     return url;
 }

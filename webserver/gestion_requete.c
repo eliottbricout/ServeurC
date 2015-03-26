@@ -41,7 +41,7 @@ int parse_http_request ( const char * request_line , http_request * request ){
 		
 	}
 	rewrite_url ( request->url );
-	printf("dsfsd %s\n",request->url);
+	printf("GET %s\n",request->url);
 	return 1;
 }
 
@@ -116,16 +116,23 @@ void send_stats ( FILE * client ){
 
 void send_file (FILE* client, int file,const char *extention){
 	send_status(client ,200 ,"OK");
-	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: %s\r\n\r\n",get_file_size(file),extention);
-	copy(file,client);
+	printf("Content-Type: %s\r\nContent-Length: %d\r\n\r\n",extention,get_file_size(file));
+	fprintf(client, "Content-Type: %s\r\nContent-Length: %d\r\n\r\n",extention,get_file_size(file));
+	fflush(client);
+	copy(file,fileno(client));
 }
 
-int copy(int in, FILE* out) {
+int copy(int in, int out) {
 
-	char buff[10] ;
-	while(read(in, buff, 10)>0){
-		fprintf(out, "%s", buff);
-	}
-	return 0;
+	int towrite;
+	char buf[8000];
+
+	towrite = read(in,buf,sizeof(buf));
+	while (towrite > 0)
+	{
+		write(out,buf,towrite);
+		towrite = read(in,buf,sizeof(buf));
+	}	
+	return out;
 
 }

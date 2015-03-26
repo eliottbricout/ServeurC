@@ -45,6 +45,8 @@ int main(int argc , char **argv){
 
 				printf("<Serveur> Vous avez %d client connecté\n", nbclient);
 				gestion_client(socket_client);
+			}else{
+				close(socket_client);
 			}
 		}
 	}

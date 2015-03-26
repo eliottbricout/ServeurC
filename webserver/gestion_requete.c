@@ -95,7 +95,7 @@ void send_status ( FILE* client , int code , const char * reason_phrase ){
 
 void send_response ( FILE * client , int code , const char * reason_phrase ,const char * message_body ){
 	send_status(client ,code ,reason_phrase);
-	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n%s",(int)strlen(message_body),message_body);
+	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/plain\r\n\r\n%s",(int)strlen(message_body),message_body);
 }
 
 char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
@@ -114,9 +114,9 @@ void send_stats ( FILE * client ){
 	send_response (  client , 200 , "OK" , ligne);
 }
 
-void send_file (FILE* client, int file ){
+void send_file (FILE* client, int file,const char *extention){
 	send_status(client ,200 ,"OK");
-	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n",get_file_size(file));
+	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: %s\r\n\r\n",get_file_size(file),extention);
 	copy(file,client);
 }
 

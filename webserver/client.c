@@ -14,6 +14,7 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include "stats.h"
+#include "mimes.h"
 
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
@@ -39,18 +40,19 @@ void gestion_client(int socket_client){
 		send_response ( fp , 405 , "Method Not Allowed" , "Method Not Allowed \r\n" );
 	}else if ( strstr(request.url , "..")  != NULL){
 		get_stats()->ko_403++;
-	    send_response ( fp , 403 , "Forbidden" , "Forbidden \r\n" );
+	    send_response ( fp , 403 ,"Forbidden" , "Forbidden \r\n" );
 	}else if ( strstr(request.url , "stats")  != NULL){
 		get_stats()->ok_200++;
 	    send_stats(fp);
 	}else if ( ( fd = check_and_open (request.url , "../html") ) != -1){
 		get_stats()->ok_200++;
-		send_file (fp, fd );
+		printf("sfgsdgsgdfggf");
+		send_file (fp, fd ,getMineType(request.url ) );
 	}else{
 		get_stats()->ko_404++;
 		send_response (fp, 404 , "Not Found" , " Not Found \r\n" );
 	}
-	
+	printf("sfgsdgsgdfggf");
 	printf("<Serveur> Un client a quitté le serveur.\n");
 	fclose(fp);
 	exit(0);

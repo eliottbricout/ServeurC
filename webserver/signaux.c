@@ -16,7 +16,7 @@
 
 
 extern int nbclient;
-
+// init les signaux
 void initSignaux(){
 	if(signal(SIGPIPE, SIG_IGN) == SIG_ERR){
 		perror("Problème de signal");
@@ -32,7 +32,7 @@ void initSignaux(){
 	}
 
 }
-
+// traitement signal
 void traitement_signal(int sig){
 	sig=sig;
 	if(wait(NULL)==-1){

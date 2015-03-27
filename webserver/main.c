@@ -40,7 +40,7 @@ int main(int argc , char **argv){
         printf("erreur semaphore\n");
         return 42;
     }
-    
+    	//creation du serveur
 	socket_serveur = creer_serveur(8080);
 
 	if(socket_serveur == -1){
@@ -54,8 +54,17 @@ int main(int argc , char **argv){
 			perror("Bug de connection");
 		}else{
 			nbclient++;
+			// creation du fils
 			if(fork() == 0){
+				if(sem_wait(getSemaphore())==-1){
+				     perror("sem_wait");
+				     exit(-1);
+			     	}
 				get_stats()->served_connections++;
+				if(sem_post(getSemaphore())==-1){
+				    perror("sem_post");
+				    exit(-1);
+				 }
 				printf("<Serveur> Un client vient de se connecter\n");
 
 				printf("<Serveur> Vous avez %d client connecté\n", nbclient);

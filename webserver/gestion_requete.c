@@ -22,6 +22,7 @@
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
 
+// analyse la request get
 int parse_http_request ( const char * request_line , http_request * request ){
 
 	char method[64];
@@ -44,7 +45,7 @@ int parse_http_request ( const char * request_line , http_request * request ){
 	printf("GET %s\n",request->url);
 	return 1;
 }
-
+// recrit l'url (enleve ce qui a apres le ? et remplace / par /index.html)
 char * rewrite_url ( char * url ){
 	char * s;
 	s=strchr(url,'?');
@@ -56,12 +57,12 @@ char * rewrite_url ( char * url ){
 	}
 	return url;
 }
-
+// skip les ligne apres le get
 void skip_headers ( FILE * client ){
 	while(fgets_or_exit(buff , SIZE_BUFF, client)!=NULL && ligneVide(buff)==0){
 	}
 }
-
+// regarde si la ligne est vide
 int ligneVide(char * str){
 	if(str[0]=='\n' || str[0]=='\r' ){
 		return 1;
@@ -101,13 +102,12 @@ void send_response ( FILE * client , int code , const char * reason_phrase ,cons
 		perror("bug fprintf");
 	}
 }
-//get ou quitte
+//lis une ligne de la requete envoyee par le client sur size octets et renvoie la ligne lue
 char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	if(fgets(buffer,size,stream)==NULL){
 		printf("<Serveur> Un client a quitté le serveur.\n");
 		exit(0);
 	}
-	printf("%s",buffer);
 	return buffer;
 
 }
@@ -115,7 +115,7 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 void send_stats ( FILE * client ){
 	web_stats* stats=get_stats();
 	char ligne[1024];
-	snprintf(ligne, 1024, "served_connections=%d \nserved_requests=%d\nok_200=%d\nko_400=%d\nko_403=%d\nko_404=%d",stats->served_connections,stats->served_requests,stats->ok_200,stats->ko_400,stats->ko_403,stats->ko_403);
+	snprintf(ligne, 1024, "served_connections=%d \nserved_requests=%d\nok_200=%d\nko_400=%d\nko_403=%d\nko_404=%d",stats->served_connections,stats->served_requests,stats->ok_200,stats->ko_400,stats->ko_403,stats->ko_404);
 	send_response (  client , 200 , "OK" , ligne);
 }
 // envoye le fichier est adapte le content-Length

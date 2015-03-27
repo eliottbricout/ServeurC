@@ -4,7 +4,7 @@
 #include <sys/mman.h>
 
 sem_t *semaphore;
-
+// return la semaphore
 sem_t *getSemaphore(){
     return semaphore;
 }

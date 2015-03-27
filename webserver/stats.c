@@ -17,7 +17,7 @@
 #include <sys/mman.h>
 
 static web_stats* stats;
-
+//init les stats
 int init_stats(){
 	if((stats=mmap ( NULL , sizeof(stats) ,PROT_READ | PROT_WRITE , MAP_SHARED | MAP_ANONYMOUS, -1, 0 ))==MAP_FAILED){
 		perror("mmap");
@@ -30,7 +30,7 @@ int init_stats(){
 	stats->ko_404=0;
 	return 0;
 }
-
+//return les stats
 web_stats *get_stats(){
 	return stats;
 }

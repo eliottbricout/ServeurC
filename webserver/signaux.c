@@ -35,6 +35,8 @@ void initSignaux(){
 
 void traitement_signal(int sig){
 	sig=sig;
-	wait(NULL);
+	if(wait(NULL)==-1){
+		perror("erreur wait");
+	}
 	nbclient--;
 }

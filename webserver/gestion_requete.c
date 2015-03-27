@@ -68,7 +68,7 @@ int ligneVide(char * str){
 	}
 	return 0;
 }
-
+// check et ouvre le fichier document_root/url
 int check_and_open ( const char * url , const char * document_root ){
 	int fd;
 	char buff[1024];
@@ -79,7 +79,7 @@ int check_and_open ( const char * url , const char * document_root ){
 	get_file_size(fd);
 	return fd;
 }
-
+// retourne la taille du fichier
 int get_file_size(int fd){
 	struct stat buff;
 	if  (fstat(fd,&buff) != 0) {  
@@ -88,16 +88,20 @@ int get_file_size(int fd){
    }  
 	return (int)buff.st_size;
 }
-
+// envoye l'entete (code / phrase d'avant )
 void send_status ( FILE* client , int code , const char * reason_phrase ){
-	fprintf(client, "HTTP/1.1 %d %s\r\n", code,reason_phrase);
+	if(fprintf(client, "HTTP/1.1 %d %s\r\n", code,reason_phrase)<0){
+		perror("bug fprintf");
+	}
 }
-
+// envoye l'entete (connection / content-length / content-Type /data
 void send_response ( FILE * client , int code , const char * reason_phrase ,const char * message_body ){
 	send_status(client ,code ,reason_phrase);
-	fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/plain\r\n\r\n%s",(int)strlen(message_body),message_body);
+	if(fprintf(client, "Connection: close\r\nContent-Length: %d\r\nContent-Type: text/plain\r\n\r\n%s",(int)strlen(message_body),message_body)<0){
+		perror("bug fprintf");
+	}
 }
-
+//get ou quitte
 char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	if(fgets(buffer,size,stream)==NULL){
 		printf("<Serveur> Un client a quitté le serveur.\n");
@@ -107,32 +111,42 @@ char *fgets_or_exit ( char *buffer , int size , FILE *stream ){
 	return buffer;
 
 }
+//renvoyes les stats
 void send_stats ( FILE * client ){
 	web_stats* stats=get_stats();
 	char ligne[1024];
 	snprintf(ligne, 1024, "served_connections=%d \nserved_requests=%d\nok_200=%d\nko_400=%d\nko_403=%d\nko_404=%d",stats->served_connections,stats->served_requests,stats->ok_200,stats->ko_400,stats->ko_403,stats->ko_403);
 	send_response (  client , 200 , "OK" , ligne);
 }
-
+// envoye le fichier est adapte le content-Length
 void send_file (FILE* client, int file,const char *extention){
 	send_status(client ,200 ,"OK");
 	printf("Content-Type: %s\r\nContent-Length: %d\r\n\r\n",extention,get_file_size(file));
-	fprintf(client, "Content-Type: %s\r\nContent-Length: %d\r\n\r\n",extention,get_file_size(file));
+	if(fprintf(client, "Content-Type: %s\r\nContent-Length: %d\r\n\r\n",extention,get_file_size(file))<0){
+		perror("bug fprintf");
+	}
 	fflush(client);
 	copy(file,fileno(client));
 }
-
+//copy de in dans out
 int copy(int in, int out) {
 
-	int towrite;
-	char buf[8000];
+	int taille;
+	char buff[8000];
 
-	towrite = read(in,buf,sizeof(buf));
-	while (towrite > 0)
-	{
-		write(out,buf,towrite);
-		towrite = read(in,buf,sizeof(buf));
+	if((taille = read(in,buff,sizeof(buff)))==-1){
+		perror("error read copy");
+		return -1;
+	}
+	while (taille > 0){
+		if((write(out,buff,taille)==0)){
+			perror("error write copy");
+			return -1;
+		}
+		if((taille = read(in,buff,sizeof(buff)))==-1){
+			perror("error read copy");
+			return -1;
+		}
 	}	
 	return out;
-
 }

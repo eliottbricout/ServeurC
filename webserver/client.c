@@ -13,6 +13,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include "mySemaphore.h"
+#include <semaphore.h>
 #include "stats.h"
 #include "mimes.h"
 
@@ -21,40 +23,88 @@ char buff[SIZE_BUFF];
 
 
 void gestion_client(int socket_client){
-	
+	if(sem_wait(getSemaphore())==-1){
+             perror("sem_wait");
+             exit(-1);
+     }
 	get_stats()->served_requests++;
+	if(sem_post(getSemaphore())==-1){
+            perror("sem_post");
+            exit(-1);
+         }
 	/* On peut maintenant dialoguer avec le client */
 	int bad_request=1;
 	int fd;
 	http_request request;
-	FILE *fp =fdopen(socket_client , "w+");
+	FILE *fp;
+	if((fp =fdopen(socket_client , "w+"))==NULL){
+		perror("erreur fdopen");
+	}
 	fgets_or_exit(buff,SIZE_BUFF,fp);
 	bad_request = parse_http_request(buff,&request);
 	skip_headers ( fp );
-	printf("%d reggr\n",bad_request);
-	printf("url : %s",getMineType(request.url ));
-	//send_response ( fp , 403 , " Method Not Allowed" , " Method Not Allowed \r\n" );
+	
 	if (bad_request==0){
-		get_stats()->ko_400++;
+		 if(sem_wait(getSemaphore())==-1){
+             perror("sem_wait");
+             exit(-1);
+         }
+         get_stats()->ko_400+=1;
+         if(sem_post(getSemaphore())==-1){
+            perror("sem_post");
+            exit(-1);
+         }
 		send_response(fp , 400 , "Bad Request" , " Bad request \r\n" );
 	}else if ( request . method == HTTP_UNSUPPORTED ){
 		send_response ( fp , 405 , "Method Not Allowed" , "Method Not Allowed \r\n" );
 	}else if ( strstr(request.url , "..")  != NULL){
-		get_stats()->ko_403++;
+		if(sem_wait(getSemaphore())==-1){
+             perror("sem_wait");
+             exit(-1);
+         }
+         get_stats()->ko_403+=1;
+         if(sem_post(getSemaphore())==-1){
+            perror("sem_post");
+            exit(-1);
+         }
 	    send_response ( fp , 403 ,"Forbidden" , "Forbidden \r\n" );
 	}else if ( strstr(request.url , "stats")  != NULL){
-		get_stats()->ok_200++;
+		if(sem_wait(getSemaphore())==-1){
+             perror("sem_wait");
+             exit(-1);
+         }
+         get_stats()->ok_200+=1;
+         if(sem_post(getSemaphore())==-1){
+            perror("sem_post");
+            exit(-1);
+         }
 	    send_stats(fp);
 	}else if ( ( fd = check_and_open (request.url , "../html") ) != -1){
-		get_stats()->ok_200++;
+		if(sem_wait(getSemaphore())==-1){
+             perror("sem_wait");
+             exit(-1);
+         }
+         get_stats()->ok_200+=1;
+         if(sem_post(getSemaphore())==-1){
+            perror("sem_post");
+            exit(-1);
+         }
 		printf("%s",getMineType(request.url ));
 		send_file (fp, fd ,getMineType(request.url ) );
 	}else{
-		get_stats()->ko_404++;
+		if(sem_wait(getSemaphore())==-1){
+             perror("sem_wait");
+             exit(-1);
+         }
+         get_stats()->ko_404+=1;
+         if(sem_post(getSemaphore())==-1){
+            perror("sem_post");
+            exit(-1);
+         }
 		send_response (fp, 404 , "Not Found" , " Not Found \r\n" );
 	}
-	printf("sfgsdgsgdfggf");
-	printf("<Serveur>Un client a quitté le serveur WEST.\n");
+	
+	printf("<Serveur>Un client a quitté le serveur.\n");
 	fclose(fp);
 	exit(0);
 }

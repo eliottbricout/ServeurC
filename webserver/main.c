@@ -14,6 +14,7 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include "stats.h"
+#include "mySemaphore.h"
 
 #define SIZE_BUFF 2048
 char buff[SIZE_BUFF];
@@ -23,15 +24,29 @@ int main(int argc , char **argv){
 	int socket_serveur;
 	int socket_client;
 
-	init_stats();
+	
 	initSignaux();
 	
 	if(argc > 1 && strcmp(argv[1], "-advice") == 0){
 		printf("Don 't Panic !\n ");
 		return 42;
 	}
-
+	
+	if(init_stats()!=0){
+	 	printf("erreur stats\n");
+        return 42;
+	}
+	if(initSemaphore()!=0){
+        printf("erreur semaphore\n");
+        return 42;
+    }
+    
 	socket_serveur = creer_serveur(8080);
+
+	if(socket_serveur == -1){
+          printf("erreur de creation serveur\n");	
+          return 42;
+	}
 
 	while(1){
 		socket_client = accept(socket_serveur , NULL , NULL);
